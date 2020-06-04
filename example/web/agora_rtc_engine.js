@@ -1,4 +1,72 @@
 console.log("agora sdk version: " + AgoraRTC.VERSION + " compatible: " + AgoraRTC.checkSystemRequirements());
+
+var rtc = {
+  client: null,
+  joined: false,
+  published: false,
+  localStream: null,
+  remoteStreams: [],
+  params: {},
+};
+
+/// Creates an RtcEngine instance.
+function create(handleId, appId) {
+  var mode = "live";
+  var codec = "h264";
+  rtc.client = AgoraRTC.createClient({mode: mode, codec: codec});
+  rtc.client.init(appId, function () {
+    agoraMethodResult({'handleId': handleId, 'uid': '' + appId});
+  }, (err) => {
+    agoraMethodResult({'handleId': handleId, 'error': err});
+  });
+}
+
+function joinChannel(handleId, token, channelId, info, uid) {
+  rtc.client.join(token, channelId, uid, function (uid) {
+    rtc.params.uid = uid;
+    rtc.joined = true;
+    rtc.localStream = AgoraRTC.createStream({
+      streamID: uid,
+      audio: true,
+      video: true,
+      screen: false,
+      microphoneId: null,
+      cameraId: null
+    });
+
+    // init local stream
+    rtc.localStream.init(function () {
+      rtc.client.publish(rtc.localStream, function (err) {
+        agoraMethodResult({'handleId': handleId, 'error': err});
+      });
+      agoraMethodResult({'handleId': handleId});
+    }, function (err) {
+      agoraMethodResult({'handleId': handleId, 'error': err});
+    })
+  }, function(err) {
+    agoraMethodResult({'handleId': handleId, 'error': err});
+  });
+}
+
+function setupLocalVideo(handleId) {
+  agoraMethodResult({'handleId': handleId});
+}
+
+function startPreview() {
+  rtc.localStream.play("stream-view-" + rtc.params.uid);
+  agoraMethodResult({'handleId': handleId});
+}
+
+/// Helper function called within Agora SDK to find dom element created by flutter
+function fltFindNativeElement(id) {
+  //getElementsByTagName('flt-platform-view')[0].shadowRoot.getElementById(t.elementID)
+  let fltPlatformViews = document.getElementsByTagName('flt-platform-view');
+  for(var i = 0; i < fltPlatformViews.length; i++)
+    if (fltPlatformViews[i].shadowRoot.getElementById(id) !== null)
+      return fltPlatformViews[i].shadowRoot.getElementById(id);
+  return null;
+}
+
 //
 //function addView (streamViewId, id) {
 //
@@ -287,14 +355,15 @@ console.log("agora sdk version: " + AgoraRTC.VERSION + " compatible: " + AgoraRT
 //  join(rtc, params);
 //}
 //
-//function fltFindNativeElement(id) {
-//  //getElementsByTagName('flt-platform-view')[0].shadowRoot.getElementById(t.elementID)
-//  let fltPlatformViews = document.getElementsByTagName('flt-platform-view');
-//  for(var i = 0; i < fltPlatformViews.length; i++)
-//    if (fltPlatformViews[i].shadowRoot.getElementById(id) !== null)
-//      return fltPlatformViews[i].shadowRoot.getElementById(id);
-//  return null;
-//}
+//This helper is used in the AgoraRTCSdk to find the shadow element created by flutter
+function fltFindNativeElement(id) {
+  //getElementsByTagName('flt-platform-view')[0].shadowRoot.getElementById(t.elementID)
+  let fltPlatformViews = document.getElementsByTagName('flt-platform-view');
+  for(var i = 0; i < fltPlatformViews.length; i++)
+    if (fltPlatformViews[i].shadowRoot.getElementById(id) !== null)
+      return fltPlatformViews[i].shadowRoot.getElementById(id);
+  return null;
+}
 
 
 function xceptJoin() {

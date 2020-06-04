@@ -28,7 +28,7 @@ flutter:
   plugin:
     platforms:
       web:
-        pluginClass: AgoraRtcEngine
+        pluginClass: AgoraRtcEngineWeb
         fileName: agora_rtc_engine_web.dart
 
   # To add assets to your plugin package, add an assets section, like this:

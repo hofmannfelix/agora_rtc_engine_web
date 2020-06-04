@@ -1,5 +1,8 @@
 
-import 'package:agorartcengineweb/agora_rtc_engine_web.dart';
+import 'dart:html';
+import 'dart:ui' as ui;
+
+import 'package:agorartcengineweb/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 
 /// AgoraRenderWidget - This widget will automatically manage the native view.
@@ -37,20 +40,26 @@ class AgoraRenderWidget extends StatefulWidget {
 class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
   Widget _nativeView;
 
-  int _viewId;
+  String _viewId;
 
   @override
   void initState() {
     super.initState();
-    _nativeView = AgoraRtcEngine.createNativeView((viewId) {
-      _viewId = viewId;
-      _bindView();
-    });
+    _viewId = "stream-view-${widget.uid}";
+    final agoraElement = DivElement()
+      ..id = _viewId
+      ..className = "video-placeholder";
+
+    // ignore: undefined_prefixed_name
+    ui.platformViewRegistry.registerViewFactory(_viewId, (_) => agoraElement);
+
+    _nativeView = HtmlElementView(viewType: _viewId);
+    _bindView();
   }
 
   @override
   void dispose() {
-    AgoraRtcEngine.removeNativeView(_viewId);
+    AgoraRtcEngine.removeNativeView(widget.uid);
     if (widget.preview) AgoraRtcEngine.stopPreview();
     super.dispose();
   }
@@ -73,10 +82,10 @@ class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
 
   void _bindView() {
     if (widget.local) {
-      AgoraRtcEngine.setupLocalVideo(_viewId, widget.mode);
+      AgoraRtcEngine.setupLocalVideo(widget.uid, widget.mode);
       if (widget.preview) AgoraRtcEngine.startPreview();
     } else {
-      AgoraRtcEngine.setupRemoteVideo(_viewId, widget.mode, widget.uid);
+      AgoraRtcEngine.setupRemoteVideo(widget.uid, widget.mode, widget.uid);
     }
   }
 

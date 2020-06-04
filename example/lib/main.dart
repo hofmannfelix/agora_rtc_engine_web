@@ -1,11 +1,10 @@
-
+import 'package:agorartcengineweb/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
   runApp(MyApp());
 }
 
@@ -15,32 +14,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+
+  bool _showPreview = false;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-  }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      //await AgoraRtcEngine.create("hey wass up its the key");
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
+    final agoraAppId = "409d9805ff80450b993d4ec3c2d121ea";
+    AgoraRtcEngine.create(agoraAppId);
+    AgoraRtcEngine.joinChannel(null, "test", "", 0);
   }
 
   @override
@@ -50,8 +33,15 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Column(
+          children: [
+            FlatButton(
+              child: Text("click me"),
+              onPressed: () => setState(() => _showPreview = true),
+            ),
+            if (_showPreview)
+              AgoraRenderWidget(0, preview: true),
+          ],
         ),
       ),
     );
