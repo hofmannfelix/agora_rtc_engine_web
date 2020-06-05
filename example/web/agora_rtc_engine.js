@@ -5,16 +5,16 @@ var rtc = {
   joined: false,
   published: false,
   localStream: null,
-  remoteStreams: [],
+  remoteStreams: {},
   params: {},
 };
 
-/// Creates an RtcEngine instance.
 function create(handleId, appId) {
   var mode = "live";
   var codec = "h264";
   rtc.client = AgoraRTC.createClient({mode: mode, codec: codec});
   rtc.client.init(appId, function () {
+    handleEvents(rtc);
     agoraMethodResult({'handleId': handleId, 'uid': '' + appId});
   }, (err) => {
     agoraMethodResult({'handleId': handleId, 'error': err});
@@ -24,6 +24,7 @@ function create(handleId, appId) {
 function joinChannel(handleId, token, channelId, info, uid) {
   rtc.client.join(token, channelId, uid, function (uid) {
     rtc.params.uid = uid;
+    rtc.params.channelId = channelId;
     rtc.joined = true;
     rtc.localStream = AgoraRTC.createStream({
       streamID: uid,
@@ -33,8 +34,6 @@ function joinChannel(handleId, token, channelId, info, uid) {
       microphoneId: null,
       cameraId: null
     });
-
-    // init local stream
     rtc.localStream.init(function () {
       rtc.client.publish(rtc.localStream, function (err) {
         agoraMethodResult({'handleId': handleId, 'error': err});
@@ -48,13 +47,75 @@ function joinChannel(handleId, token, channelId, info, uid) {
   });
 }
 
-function setupLocalVideo(handleId) {
+function setupLocalVideo(handleId, uid, renderMode) {
+  rtc.localStream.play("stream-view-" + uid);
   agoraMethodResult({'handleId': handleId});
 }
 
-function startPreview() {
-  rtc.localStream.play("stream-view-" + rtc.params.uid);
+function setupRemoteVideo(handleId, uid, renderMode) {
+  console.log("stream-view-" + uid);
+  console.log("found div is: " + fltFindNativeElement("stream-view-" + uid));
+
+  rtc.remoteStreams['' + uid].play("stream-view-" + uid);
   agoraMethodResult({'handleId': handleId});
+}
+
+function startPreview(handleId) {
+  agoraMethodResult({'handleId': handleId});
+}
+
+function handleEvents(rtc) {
+  // Occurs when an error message is reported and requires error handling.
+  rtc.client.on("error", (err) => {
+    console.log(err)
+  });
+  // Occurs when the local stream is published.
+  rtc.client.on("stream-published", function (evt) {
+    console.log("stream-published");
+  })
+  // Occurs when the remote stream is added.
+  rtc.client.on("stream-added", function (evt) {
+    var remoteStream = evt.stream;
+    var uid = remoteStream.getId();
+    if (uid !== rtc.params.uid) {
+      rtc.client.subscribe(remoteStream, function (err) {
+        console.log("stream subscribe failed", err);
+      });
+      agoraEvent({'method': 'onUserJoined', 'uid': uid, 'elapsed': 0});
+    }
+  });
+  // Occurs when a user subscribes to a remote stream.
+  rtc.client.on("stream-subscribed", function (evt) {
+    var remoteStream = evt.stream;
+    var uid = remoteStream.getId();
+    rtc.remoteStreams['' + uid] = remoteStream;
+    agoraEvent({'method': 'onJoinChannelSuccess', 'channelId': rtc.params.channelId, 'uid': uid, 'elapsed': 0});
+
+//    rtc.remoteStreams.push(remoteStream);
+//
+//    var streamViewId = fltEvent({'eventType': '0', 'uid': '' + id});
+//    console.log("flutter got stream view id " + streamViewId);
+//
+//    addView(streamViewId, id);
+//    remoteStream.play("remote_video_" + id) ;
+//    console.log('stream-subscribed remote-uid: ', id);
+  });
+
+  // Occurs when the remote stream is removed; for example, a peer user calls Client.unpublish.
+  rtc.client.on("stream-removed", function (evt) {
+    var remoteStream = evt.stream;
+    var id = remoteStream.getId();
+    remoteStream.stop("remote_video_" + id);
+    rtc.remoteStreams = rtc.remoteStreams.filter(function (stream) {
+      return stream.getId() !== id
+    })
+
+    var streamViewId = fltEvent({'eventType': '1', 'uid': '' + id});
+    console.log("flutter removed stream view id " + streamViewId);
+
+    removeView(streamViewId, id);
+    console.log('stream-removed remote-uid: ', id);
+  })
 }
 
 /// Helper function called within Agora SDK to find dom element created by flutter

@@ -27,7 +27,7 @@ class AgoraRenderWidget extends StatefulWidget {
         this.mode = VideoRenderMode.Hidden,
         this.local = false,
         this.preview = false,
-      })  : assert(uid != null),
+      }) : assert(uid != null),
         assert(mode != null),
         assert(local != null),
         assert(preview != null),
@@ -53,8 +53,7 @@ class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
     // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(_viewId, (_) => agoraElement);
 
-    _nativeView = HtmlElementView(viewType: _viewId);
-    _bindView();
+    Future.delayed(Duration(), () => _bindView());
   }
 
   @override
@@ -70,12 +69,12 @@ class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
 
     if ((widget.uid != oldWidget.uid || widget.local != oldWidget.local) &&
         _viewId != null) {
-      _bindView();
+      //_bindView();
       return;
     }
 
     if (widget.mode != oldWidget.mode) {
-      _changeRenderMode();
+      //_changeRenderMode();
       return;
     }
   }
@@ -98,5 +97,5 @@ class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => _nativeView;
+  Widget build(BuildContext context) => _nativeView ??= HtmlElementView(viewType: _viewId);
 }

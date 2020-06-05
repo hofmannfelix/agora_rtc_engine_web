@@ -1,8 +1,5 @@
 import 'package:agorartcengineweb/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,16 +11,29 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   bool _showPreview = false;
+  int myUid = 1;
+  List<int> _joinedUids = [];
 
   @override
   void initState() {
     super.initState();
+    _init();
+  }
 
+  _init() async {
     final agoraAppId = "409d9805ff80450b993d4ec3c2d121ea";
-    AgoraRtcEngine.create(agoraAppId);
-    AgoraRtcEngine.joinChannel(null, "test", "", 0);
+    AgoraRtcEngine.onUserJoined = (int uid, int elapsed) => setState(() {
+      print("Add uid $uid");
+    });
+    AgoraRtcEngine.onJoinChannelSuccess = (String channel, int uid, int elapsed) => setState(() {
+      _joinedUids.add(uid);
+      print("Added uid $uid to $_joinedUids");
+    });
+    await AgoraRtcEngine.create(agoraAppId);
+    await AgoraRtcEngine.joinChannel(null, "xcept-channel", "", myUid);
+    _joinedUids.add(myUid);
+    setState(() {});
   }
 
   @override
@@ -39,8 +49,10 @@ class _MyAppState extends State<MyApp> {
               child: Text("click me"),
               onPressed: () => setState(() => _showPreview = true),
             ),
-            if (_showPreview)
-              AgoraRenderWidget(0, preview: true),
+            ..._joinedUids.map((uid) => SizedBox.fromSize(
+                  size: Size(400, 300),
+                  child: AgoraRenderWidget(uid, local: uid == myUid, preview: true),
+                )),
           ],
         ),
       ),

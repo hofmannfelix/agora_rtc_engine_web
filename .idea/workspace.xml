@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ff1c4702-1dd6-4609-904c-e9a137147455" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/web/agora_rtc_engine.js" beforeDir="false" afterPath="$PROJECT_DIR$/example/web/agora_rtc_engine.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/example/web/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/agora_rtc_engine.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/agora_rtc_engine.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/agora_rtc_engine_web.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/agora_rtc_engine_web.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/agora_render_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/agora_render_widget.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/web_interface.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,48 +61,41 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.js" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1398" height="230" key="GridCell.Tab.0.bottom" timestamp="1591285108094">
+    <state x="408" y="196" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1591364958397">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1591285108094" />
-    <state width="1398" height="230" key="GridCell.Tab.0.center" timestamp="1591285108094">
+    <state x="408" y="196" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.23.1440.877@0.23.1440.877" timestamp="1591364958397" />
+    <state width="1398" height="230" key="GridCell.Tab.0.bottom" timestamp="1591372278323">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1591285108094" />
-    <state width="1398" height="230" key="GridCell.Tab.0.left" timestamp="1591285108093">
+    <state width="1398" height="230" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1591372278323" />
+    <state width="1398" height="230" key="GridCell.Tab.0.center" timestamp="1591372278322">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1591285108093" />
-    <state width="1398" height="230" key="GridCell.Tab.0.right" timestamp="1591285108094">
+    <state width="1398" height="230" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1591372278322" />
+    <state width="1398" height="230" key="GridCell.Tab.0.left" timestamp="1591372278322">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1591285108094" />
-    <state x="390" y="294" key="com.intellij.ide.util.TipDialog" timestamp="1591195305199">
+    <state width="1398" height="230" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1591372278322" />
+    <state width="1398" height="230" key="GridCell.Tab.0.right" timestamp="1591372278323">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="390" y="294" key="com.intellij.ide.util.TipDialog/0.23.1440.877@0.23.1440.877" timestamp="1591195305199" />
+    <state width="1398" height="230" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1591372278323" />
+    <state x="390" y="294" key="com.intellij.ide.util.TipDialog" timestamp="1591366093309">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="390" y="294" key="com.intellij.ide.util.TipDialog/0.23.1440.877@0.23.1440.877" timestamp="1591366093309" />
     <state x="372" y="218" width="695" height="486" key="find.popup" timestamp="1591091315794">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="372" y="218" width="695" height="486" key="find.popup/0.23.1440.877@0.23.1440.877" timestamp="1591091315794" />
-    <state width="417" height="106" key="javadoc.popup.new" timestamp="1591210078453">
+    <state width="417" height="106" key="javadoc.popup.new" timestamp="1591366151232">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="417" height="106" key="javadoc.popup.new/0.23.1440.877@0.23.1440.877" timestamp="1591210078453" />
-    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1590936126241">
+    <state width="417" height="106" key="javadoc.popup.new/0.23.1440.877@0.23.1440.877" timestamp="1591366151232" />
+    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1591287889987">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1590936126241" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/agora_rtc_engine_web.dart</url>
-          <line>48</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1591287889987" />
   </component>
 </project>

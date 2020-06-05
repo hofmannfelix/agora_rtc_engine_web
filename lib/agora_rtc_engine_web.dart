@@ -1,19 +1,29 @@
 import 'dart:async';
 import 'dart:js';
 
+import 'package:agorartcengineweb/agora_rtc_engine.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 class AgoraRtcEngineWeb {
+  static const methodChannelName = "agora_rtc_engine";
+  static const eventChannelName = "agora_rtc_engine_event_channel";
+
   static void registerWith(Registrar registrar) {
-    final MethodChannel channel =
-        MethodChannel('agora_rtc_engine', const StandardMethodCodec(), registrar.messenger);
+    final channel =
+        MethodChannel(methodChannelName, const StandardMethodCodec(), registrar.messenger);
     final AgoraRtcEngineWeb instance = AgoraRtcEngineWeb();
     channel.setMethodCallHandler(instance.handleMethodCall);
 
     context['agoraMethodResult'] = (JsObject parameters) {
       final handleId = parameters['handleId'];
+      print("Completed method with handle id $handleId");
       instance._completer[handleId].complete(parameters);
+    };
+
+    context['agoraEvent'] = (JsObject parameters) {
+      final method = parameters['method'];
+      instance.callEvent(method, parameters);
     };
   }
 
@@ -25,13 +35,14 @@ class AgoraRtcEngineWeb {
       case 'create':
       case 'joinChannel':
       case 'setupLocalVideo':
+      case 'setupRemoteVideo':
       case 'startPreview':
         await _callJs(call);
         return true;
       default:
         throw PlatformException(
             code: 'Unimplemented',
-            details: "The url_launcher plugin for web doesn't implement "
+            details: "The agora_rtc_engine plugin for web doesn't implement "
                 "the method '${call.method}'");
     }
   }
@@ -39,9 +50,20 @@ class AgoraRtcEngineWeb {
   dynamic _callJs(MethodCall call) {
     final handleId = _nextHandleId++;
     final completer = _completer[handleId] = Completer();
-    Map args = call.arguments as Map;
-    print("Response is ${context.callMethod(call.method, [handleId, ...args.values])}");
-    return completer.future;
+    Map args = call.arguments as Map ?? {};
+    context.callMethod(call.method, [handleId, ...args.values]);
+    return completer.future..then((f) => _completer.remove(handleId));
+  }
+
+  dynamic callEvent(String method, JsObject args) {
+    switch (method) {
+      case 'onJoinChannelSuccess':
+        AgoraRtcEngine.onJoinChannelSuccess(args['channelId'], args['uid'], args['elapsed']);
+        break;
+      case 'onUserJoined':
+        AgoraRtcEngine.onUserJoined(args['uid'], args['elapsed']);
+        break;
+    }
   }
 }
 
