@@ -10,6 +10,7 @@ var rtc = {
   isAudioEnabled: true,
   defaultStream: 0, //0: high quality, 1: low quality
   lowStreamParameters: null,
+  callbackInterval: null,
   params: {},
 };
 
@@ -126,11 +127,13 @@ function joinChannel(handleId, token, channelId, info, uid) {
 
 function leaveChannel(handleId) {
   rtc.client.leave(function() {
+    if (rtc.callbackInterval != null) clearInterval(rtc.callbackInterval);
     rtc.joined = false;
     rtc.params.uid = null;
     rtc.params.channelId = null;
     rtc.localStream = null;
     rtc.remoteStreams = {};
+    rtc.callbackInterval = null;
     agoraMethodResult({'handleId': handleId});
   }, function(err) {
     agoraMethodResult({'handleId': handleId, 'error': err});
@@ -152,7 +155,7 @@ function startPreview(handleId) {
 }
 
 function initStatsIntervalCallback() {
-  setInterval(() => {
+  rtc.callbackInterval = setInterval(() => {
     rtc.client.getLocalVideoStats((stats) => {
       for(var uid in stats) {
         var s = stats[uid];
