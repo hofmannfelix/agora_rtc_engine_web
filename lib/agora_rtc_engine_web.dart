@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:js';
 
 import 'package:agorartcengineweb/agora_rtc_engine.dart';
@@ -17,8 +18,12 @@ class AgoraRtcEngineWeb {
 
     context['agoraMethodResult'] = (JsObject parameters) {
       final handleId = parameters['handleId'];
+      final error = parameters['error'];
       print("Completed method with handle id $handleId");
-      instance._completer[handleId].complete(parameters);
+      if (error == null)
+        instance._completer[handleId].complete(parameters);
+      else
+        instance._completer[handleId].complete(parameters);
     };
 
     context['agoraEvent'] = (JsObject parameters) {
@@ -33,12 +38,35 @@ class AgoraRtcEngineWeb {
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'create':
+      case 'enableVideo':
+      case 'enableAudio':
       case 'joinChannel':
+      case 'leaveChannel':
       case 'setupLocalVideo':
       case 'setupRemoteVideo':
-      case 'startPreview':
+      case 'muteLocalAudioStream':
+      case 'muteLocalVideoStream':
+      case 'enableDualStreamMode':
+      case 'setRemoteDefaultVideoStreamType':
+      case 'setRemoteVideoStreamType':
         await _callJs(call);
         return true;
+      case 'setParameters':
+        final Map params = jsonDecode(call.arguments['params']);
+        if (params?.containsKey('che.video.lowBitRateStreamParameter') == true)
+          await _callJs(
+              MethodCall('setLowStreamParameter', params['che.video.lowBitRateStreamParameter']));
+        return 0;
+      case 'startPreview':
+      case 'stopPreview':
+      case 'removeNativeView':
+      case 'setChannelProfile':
+      case 'setAudioProfile':
+      case 'setVideoEncoderConfiguration':
+      case 'setRemoteUserPriority':
+      case 'adjustPlaybackSignalVolume':
+        print("The method ${call.method} has no effect on web");
+        break;
       default:
         throw PlatformException(
             code: 'Unimplemented',
@@ -58,10 +86,24 @@ class AgoraRtcEngineWeb {
   dynamic callEvent(String method, JsObject args) {
     switch (method) {
       case 'onJoinChannelSuccess':
-        AgoraRtcEngine.onJoinChannelSuccess(args['channelId'], args['uid'], args['elapsed']);
+        if (AgoraRtcEngine.onJoinChannelSuccess != null)
+          AgoraRtcEngine.onJoinChannelSuccess(args['channelId'], args['uid'], args['elapsed']);
         break;
       case 'onUserJoined':
-        AgoraRtcEngine.onUserJoined(args['uid'], args['elapsed']);
+        if (AgoraRtcEngine.onUserJoined != null)
+          AgoraRtcEngine.onUserJoined(args['uid'], args['elapsed']);
+        break;
+      case 'onUserOffline':
+        if (AgoraRtcEngine.onUserOffline != null)
+          AgoraRtcEngine.onUserOffline(args['uid'], args['reason']);
+        break;
+      case 'onLocalVideoStats':
+        if (AgoraRtcEngine.onLocalVideoStats != null)
+          AgoraRtcEngine.onLocalVideoStats(LocalVideoStats.fromJson(jsonDecode(args['stats'])));
+        break;
+      case 'onRemoteVideoStats':
+        if (AgoraRtcEngine.onRemoteVideoStats != null)
+          AgoraRtcEngine.onRemoteVideoStats(RemoteVideoStats.fromJson(jsonDecode(args['stats'])));
         break;
     }
   }

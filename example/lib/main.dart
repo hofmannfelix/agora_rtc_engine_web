@@ -11,7 +11,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _showPreview = false;
   int myUid = 1;
   List<int> _joinedUids = [];
 
@@ -24,12 +23,23 @@ class _MyAppState extends State<MyApp> {
   _init() async {
     final agoraAppId = "409d9805ff80450b993d4ec3c2d121ea";
     AgoraRtcEngine.onUserJoined = (int uid, int elapsed) => setState(() {
-      print("Add uid $uid");
-    });
+          print("Add uid $uid");
+        });
     AgoraRtcEngine.onJoinChannelSuccess = (String channel, int uid, int elapsed) => setState(() {
-      _joinedUids.add(uid);
-      print("Added uid $uid to $_joinedUids");
-    });
+          _joinedUids.add(uid);
+          print("Added uid $uid to $_joinedUids");
+          setState(() {});
+        });
+    AgoraRtcEngine.onUserOffline = (int uid, int reason) => setState(() {
+          _joinedUids.remove(uid);
+          print("Removed uid $uid from $_joinedUids");
+          setState(() {});
+        });
+    AgoraRtcEngine.onRemoteVideoStats = (stats) => setState(() {
+          print("Remote video stats ${stats.receivedBitrate}");
+        });
+    await AgoraRtcEngine.setParameters(
+        '{\"che.video.lowBitRateStreamParameter\":{\"width\":90,\"height\":160,\"frameRate\":15,\"bitRate\":65}}');
     await AgoraRtcEngine.create(agoraAppId);
     await AgoraRtcEngine.joinChannel(null, "xcept-channel", "", myUid);
     _joinedUids.add(myUid);
@@ -45,14 +55,21 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           children: [
+            Row(children: [
+              ..._joinedUids.map(
+                (uid) => SizedBox.fromSize(
+                  size: Size(400, 300),
+                  child: Container(
+                    color: Colors.black12,
+                    child: AgoraRenderWidget(uid, local: uid == myUid, preview: true),
+                  ),
+                ),
+              ),
+            ]),
             FlatButton(
               child: Text("click me"),
-              onPressed: () => setState(() => _showPreview = true),
+              onPressed: () => AgoraRtcEngine.leaveChannel(),
             ),
-            ..._joinedUids.map((uid) => SizedBox.fromSize(
-                  size: Size(400, 300),
-                  child: AgoraRenderWidget(uid, local: uid == myUid, preview: true),
-                )),
           ],
         ),
       ),

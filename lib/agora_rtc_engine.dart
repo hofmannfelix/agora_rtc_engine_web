@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:agorartcengineweb/src/base.dart';
 import 'package:flutter/services.dart';
@@ -643,28 +644,27 @@ class AgoraRtcEngine {
   ///
   /// The Widget is identified by viewId, the operation and layout of the Widget are managed by the app.
   static Widget createNativeView(Function(int viewId) created, {Key key}) {
-    //TODO: create native html "view"
-//    if (Platform.isIOS) {
-//      return UiKitView(
-//        key: key,
-//        viewType: 'AgoraRendererView',
-//        onPlatformViewCreated: (viewId) {
-//          if (created != null) {
-//            created(viewId);
-//          }
-//        },
-//      );
-//    } else {
-//      return AndroidView(
-//        key: key,
-//        viewType: 'AgoraRendererView',
-//        onPlatformViewCreated: (viewId) {
-//          if (created != null) {
-//            created(viewId);
-//          }
-//        },
-//      );
-//    }
+    if (Platform.isIOS) {
+      return UiKitView(
+        key: key,
+        viewType: 'AgoraRendererView',
+        onPlatformViewCreated: (viewId) {
+          if (created != null) {
+            created(viewId);
+          }
+        },
+      );
+    } else {
+      return AndroidView(
+        key: key,
+        viewType: 'AgoraRendererView',
+        onPlatformViewCreated: (viewId) {
+          if (created != null) {
+            created(viewId);
+          }
+        },
+      );
+    }
   }
 
   /// Remove the video renderer Widget.
