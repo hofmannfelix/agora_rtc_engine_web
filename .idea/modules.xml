@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/agorartcengineweb.iml" filepath="$PROJECT_DIR$/agorartcengineweb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/agora_rtc_engine_web.iml" filepath="$PROJECT_DIR$/agora_rtc_engine_web.iml" />
       <module fileurl="file://$PROJECT_DIR$/android/agorartcengineweb_android.iml" filepath="$PROJECT_DIR$/android/agorartcengineweb_android.iml" />
       <module fileurl="file://$PROJECT_DIR$/example/android/agorartcengineweb_example_android.iml" filepath="$PROJECT_DIR$/example/android/agorartcengineweb_example_android.iml" />
     </modules>

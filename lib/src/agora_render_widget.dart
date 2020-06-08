@@ -2,8 +2,10 @@
 import 'dart:html';
 import 'dart:ui' as ui;
 
-import 'package:agorartcengineweb/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+
+import '../agora_rtc_engine.dart';
+import 'base.dart';
 
 /// AgoraRenderWidget - This widget will automatically manage the native view.
 ///

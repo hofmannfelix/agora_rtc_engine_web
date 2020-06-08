@@ -1,4 +1,4 @@
-import 'package:agorartcengineweb/agora_rtc_engine.dart';
+import 'package:agora_rtc_engine_web/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 
 void main() {

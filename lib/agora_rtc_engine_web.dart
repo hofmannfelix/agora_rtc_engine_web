@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:js';
 
-import 'package:agorartcengineweb/agora_rtc_engine.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+
+import 'agora_rtc_engine.dart';
 
 class AgoraRtcEngineWeb {
   static const methodChannelName = "agora_rtc_engine";
