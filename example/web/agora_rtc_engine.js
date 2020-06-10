@@ -5,7 +5,7 @@ var rtc = {
   joined: false,
   published: false,
   localStream: null,
-  remoteStreams: {},
+  streams: {},
   isVideoEnabled: true,
   isAudioEnabled: true,
   defaultStream: 0, //0: high quality, 1: low quality
@@ -37,12 +37,12 @@ function enableAudio(handleId) {
 }
 
 function setRemoteVideoStreamType(handleId, uid, streamType) {
-  rtc.client.setRemoteVideoStreamType(rtc.remoteStreams['' + uid], streamType);
+  rtc.client.setRemoteVideoStreamType(rtc.streams['' + uid], streamType);
   agoraMethodResult({'handleId': handleId});
 }
 
 function setRemoteVideoStreamType(handleId, uid, streamType) {
-  rtc.client.setRemoteVideoStreamType(rtc.remoteStreams['' + uid], streamType);
+  rtc.client.setRemoteVideoStreamType(rtc.streams['' + uid], streamType);
   agoraMethodResult({'handleId': handleId});
 }
 
@@ -63,7 +63,6 @@ function setLowStreamParameter(handleId, width, height, frameRate, bitRate) {
     frameRate: frameRate,
     bitRate: bitRate
   };
-  console.log("Set low stream", rtc.lowStreamParameters);
   agoraMethodResult({'handleId': handleId});
 }
 
@@ -83,7 +82,7 @@ function muteLocalVideoStream(handleId, isMuted) {
   agoraMethodResult({'handleId': handleId});
 }
 
-function enableDualstream(handleId, isEnabled) {
+function enableDualStreamMode(handleId, isEnabled) {
   if (isEnabled)
     rtc.client.enableDualStream(function () {
       agoraMethodResult({'handleId': handleId});
@@ -109,6 +108,7 @@ function joinChannel(handleId, token, channelId, info, uid) {
       video: rtc.isVideoEnabled,
       screen: false,
     });
+    rtc.streams['' + uid] = rtc.localStream;
     //setLowStreamParameter
     if (rtc.lowStreamParameters != null) rtc.client.setLowStreamParameter(rtc.lowStreamParameters);
     rtc.localStream.init(function () {
@@ -132,7 +132,7 @@ function leaveChannel(handleId) {
     rtc.params.uid = null;
     rtc.params.channelId = null;
     rtc.localStream = null;
-    rtc.remoteStreams = {};
+    rtc.streams = {};
     rtc.callbackInterval = null;
     agoraMethodResult({'handleId': handleId});
   }, function(err) {
@@ -146,7 +146,7 @@ function setupLocalVideo(handleId, uid, renderMode) {
 }
 
 function setupRemoteVideo(handleId, uid, renderMode) {
-  rtc.remoteStreams['' + uid].play("stream-view-" + uid);
+  rtc.streams['' + uid].play("stream-view-" + uid);
   agoraMethodResult({'handleId': handleId});
 }
 
@@ -183,12 +183,12 @@ function initStatsIntervalCallback() {
             uid: parseInt(uid),
             width: parseInt(s.RecvResolutionWidth),
             height: parseInt(s.RecvResolutionHeight),
-            receivedBitrate: parseInt(s.RecvBitrate),
+            receivedBitrate: parseInt(s.RecvBitrate) || 0,
             decoderOutputFrameRate: 0,
             rendererOutputFrameRate: 0,
-            packetLostRate: parseInt(s.PacketLossRate),
+            packetLostRate: parseInt(s.PacketLossRate) || 0,
             rxStreamType: 0,
-            totalFrozenTime: parseInt(s.TotalFreezeTime),
+            totalFrozenTime: parseInt(s.TotalFreezeTime) || 0,
             frozenRate: 0
         });
         agoraEvent({'method': 'onRemoteVideoStats', 'stats': statistics});
@@ -218,14 +218,14 @@ function handleEvents(rtc) {
   rtc.client.on("stream-subscribed", function (evt) {
     var remoteStream = evt.stream;
     var uid = remoteStream.getId();
-    rtc.remoteStreams['' + uid] = remoteStream;
+    rtc.streams['' + uid] = remoteStream;
     agoraEvent({'method': 'onJoinChannelSuccess', 'channelId': rtc.params.channelId, 'uid': uid, 'elapsed': 0});
   });
 
   // Occurs when the remote stream is removed; for example, a peer user calls Client.unpublish.
   rtc.client.on("peer-leave", function (evt) {
     var uid = evt.uid;
-    delete rtc.remoteStreams['' + uid];
+    delete rtc.streams['' + uid];
     agoraEvent({'method': 'onUserOffline', 'uid': uid, 'reason': 0});
   });
 }
