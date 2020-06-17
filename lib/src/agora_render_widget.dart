@@ -1,4 +1,3 @@
-
 import 'dart:html';
 import 'dart:ui' as ui;
 
@@ -24,12 +23,12 @@ class AgoraRenderWidget extends StatefulWidget {
   /// render mode
   final VideoRenderMode mode;
 
-  AgoraRenderWidget(
-      this.uid, {
-        this.mode = VideoRenderMode.Hidden,
-        this.local = false,
-        this.preview = false,
-      }) : assert(uid != null),
+  AgoraRenderWidget(this.uid, {
+    this.mode = VideoRenderMode.Hidden,
+    this.local = false,
+    this.preview = false,
+  })
+      : assert(uid != null),
         assert(mode != null),
         assert(local != null),
         assert(preview != null),
@@ -41,8 +40,8 @@ class AgoraRenderWidget extends StatefulWidget {
 
 class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
   Widget _nativeView;
-
   String _viewId;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -55,11 +54,12 @@ class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
     // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(_viewId, (_) => agoraElement);
 
-    Future.delayed(Duration(), () => _bindView());
+    Future.delayed(Duration(seconds: 1), () => _bindView());
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
     AgoraRtcEngine.removeNativeView(widget.uid);
     if (widget.preview) AgoraRtcEngine.stopPreview();
     super.dispose();
@@ -82,6 +82,7 @@ class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
   }
 
   void _bindView() {
+    if (_isDisposed) return;
     if (widget.local) {
       AgoraRtcEngine.setupLocalVideo(widget.uid, widget.mode);
       if (widget.preview) AgoraRtcEngine.startPreview();
