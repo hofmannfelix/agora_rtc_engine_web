@@ -39,6 +39,7 @@ class AgoraRenderWidget extends StatefulWidget {
 }
 
 class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
+  DivElement _domElement;
   Widget _nativeView;
   String _viewId;
   bool _isDisposed = false;
@@ -47,18 +48,19 @@ class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
   void initState() {
     super.initState();
     _viewId = "stream-view-${widget.uid}";
-    final agoraElement = DivElement()
+    _domElement = DivElement()
       ..id = _viewId
       ..className = "video-placeholder";
 
     // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(_viewId, (_) => agoraElement);
+    ui.platformViewRegistry.registerViewFactory(_viewId, (_) => _domElement);
 
     Future.delayed(Duration(seconds: 1), () => _bindView());
   }
 
   @override
   void dispose() {
+    _domElement.remove();
     _isDisposed = true;
     AgoraRtcEngine.removeNativeView(widget.uid);
     if (widget.preview) AgoraRtcEngine.stopPreview();
