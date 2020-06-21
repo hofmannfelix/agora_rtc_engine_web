@@ -126,6 +126,8 @@ function joinChannel(handleId, token, channelId, info, uid) {
 }
 
 function leaveChannel(handleId) {
+  rtc.localStream.stop();
+  rtc.localStream.close();
   rtc.client.leave(function() {
     if (rtc.callbackInterval != null) clearInterval(rtc.callbackInterval);
     rtc.joined = false;
@@ -225,8 +227,8 @@ function handleEvents(rtc) {
   // Occurs when the remote stream is removed; for example, a peer user calls Client.unpublish.
   rtc.client.on("peer-leave", function (evt) {
     var uid = evt.uid;
-    delete rtc.streams['' + uid];
     agoraEvent({'method': 'onUserOffline', 'uid': uid, 'reason': 0});
+    delete rtc.streams['' + uid];
   });
 }
 

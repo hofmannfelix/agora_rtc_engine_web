@@ -49,11 +49,12 @@ class _AgoraRenderWidgetState extends State<AgoraRenderWidget> {
     super.initState();
     _viewId = "stream-view-${widget.uid}";
     _domElement = DivElement()
+      ..innerText = ""
       ..id = _viewId
       ..className = "video-placeholder";
 
     // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(_viewId, (_) => _domElement);
+    ui.platformViewRegistry.registerViewFactory(_viewId, (_) => _domElement..innerText = '');
 
     Future.delayed(Duration(seconds: 1), () => _bindView());
   }
